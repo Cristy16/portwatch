@@ -11,7 +11,7 @@ Next.js (App Router) + TypeScript + Tailwind + Supabase (Postgres, Auth, RLS).
 - Every status must show WHY (which announcement caused it).
 - All tables have RLS enabled. Never expose the service_role key to the client.
 - Schema changes go in supabase/migrations only. No manual dashboard edits.
-- Use TypeScript strict mode. Validate inputs (zod).
+- TypeScript strict mode. Validate inputs with zod.
 - Plan first, then implement. Small commits.
 
 ## Ownership

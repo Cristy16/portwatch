@@ -70,7 +70,7 @@ function permutations<T>(items: readonly T[]): T[][] {
 }
 
 // ---------------------------------------------------------------------------
-// Core tests (1–19)
+// Tests (1–28)
 // ---------------------------------------------------------------------------
 
 describe("getTripStatus", () => {
@@ -298,7 +298,7 @@ describe("getTripStatus", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Extra coverage from earlier decisions (delete this block if not wanted)
+// Additional tests (20–28)
 // ---------------------------------------------------------------------------
 
 describe("getTripStatus - boundaries, impact and source rules", () => {

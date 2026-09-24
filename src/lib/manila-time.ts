@@ -26,3 +26,7 @@ export function utcToManilaDateOnly(utcIso: string): string {
   const manila = new Date(new Date(utcIso).getTime() + 8 * 60 * 60 * 1000);
   return manila.toISOString().slice(0, 10);
 }
+
+export function sevenDaysAgoISO(): string {
+  return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+}

@@ -27,7 +27,7 @@ export const UPDATE_FRESHNESS_HOURS = 48;
  * Announcements from INACTIVE sources are always ignored entirely.
  */
 export type UnofficialSourcePolicy = "IGNORE" | "CAP_AT_MONITOR";
-export const DEFAULT_UNOFFICIAL_SOURCE_POLICY: UnofficialSourcePolicy = "IGNORE";
+export const DEFAULT_UNOFFICIAL_SOURCE_POLICY: UnofficialSourcePolicy = "CAP_AT_MONITOR";
 
 // Asia/Manila is fixed UTC+8 with no daylight saving.
 const MS_PER_HOUR = 60 * 60 * 1000;

@@ -350,41 +350,45 @@ describe("getTripStatus - boundaries, impact and source rules", () => {
     }
   });
 
-  it("27. Policy A: unofficial Cancellation never raises status, and unofficial updates do not count for freshness", () => {
-    for (const options of [undefined, IGNORE]) {
-      const cancellation = run(TRIP_DATE, [ann({ type: "Cancellation", sourceIsOfficial: false })], options);
-      expect(cancellation.status).toBe("UNKNOWN");
-      expect(cancellation.reasons).toEqual([]);
+  it("27. Policy A (explicit): unofficial Cancellation never raises status, and unofficial updates do not count for freshness", () => {
+    const cancellation = run(
+      TRIP_DATE,
+      [ann({ type: "Cancellation", sourceIsOfficial: false })],
+      IGNORE,
+    );
+    expect(cancellation.status).toBe("UNKNOWN");
+    expect(cancellation.reasons).toEqual([]);
 
-      const info = run(TRIP_DATE, [ann({ sourceIsOfficial: false })], options);
-      expect(info.status).toBe("UNKNOWN");
-      expect(info.explanation).toBe(EXPL_NO_UPDATE);
-    }
+    const info = run(TRIP_DATE, [ann({ sourceIsOfficial: false })], IGNORE);
+    expect(info.status).toBe("UNKNOWN");
+    expect(info.explanation).toBe(EXPL_NO_UPDATE);
   });
 
-  it("28. Policy B: unofficial Cancellation -> MONITOR (explanation says unofficial source); official Cancellation still wins; unofficial updates do not count for freshness", () => {
-    const unofficialCancellation = run(
-      TRIP_DATE,
-      [ann({ id: "u1", type: "Cancellation", sourceIsOfficial: false })],
-      CAP,
-    );
-    expect(unofficialCancellation.status).toBe("MONITOR");
-    expect(unofficialCancellation.reasons.map((r) => r.announcementId)).toEqual(["u1"]);
-    expect(unofficialCancellation.explanation).toContain("unofficial source");
+  it("28. Policy B (now the default): unofficial Cancellation -> MONITOR (explanation says unofficial source); official Cancellation still wins; unofficial updates do not count for freshness", () => {
+    for (const options of [undefined, CAP]) {
+      const unofficialCancellation = run(
+        TRIP_DATE,
+        [ann({ id: "u1", type: "Cancellation", sourceIsOfficial: false })],
+        options,
+      );
+      expect(unofficialCancellation.status).toBe("MONITOR");
+      expect(unofficialCancellation.reasons.map((r) => r.announcementId)).toEqual(["u1"]);
+      expect(unofficialCancellation.explanation).toContain("unofficial source");
 
-    const officialWins = run(
-      TRIP_DATE,
-      [
-        ann({ id: "u1", type: "Cancellation", sourceIsOfficial: false }),
-        ann({ id: "o1", type: "Cancellation" }),
-      ],
-      CAP,
-    );
-    expect(officialWins.status).toBe("DISRUPTED");
-    expect(officialWins.reasons.map((r) => r.announcementId)).toEqual(["o1"]);
+      const officialWins = run(
+        TRIP_DATE,
+        [
+          ann({ id: "u1", type: "Cancellation", sourceIsOfficial: false }),
+          ann({ id: "o1", type: "Cancellation" }),
+        ],
+        options,
+      );
+      expect(officialWins.status).toBe("DISRUPTED");
+      expect(officialWins.reasons.map((r) => r.announcementId)).toEqual(["o1"]);
 
-    const notFresh = run(TRIP_DATE, [ann({ sourceIsOfficial: false })], CAP);
-    expect(notFresh.status).toBe("UNKNOWN");
-    expect(notFresh.explanation).toBe(EXPL_NO_UPDATE);
+      const notFresh = run(TRIP_DATE, [ann({ sourceIsOfficial: false })], options);
+      expect(notFresh.status).toBe("UNKNOWN");
+      expect(notFresh.explanation).toBe(EXPL_NO_UPDATE);
+    }
   });
 });

@@ -1,5 +1,6 @@
 // src/app/admin/announcements/page.tsx
 import Link from 'next/link';
+import { requireAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import AnnouncementRow from './AnnouncementRow';
 
@@ -10,6 +11,8 @@ export default async function AnnouncementsPage({
 }: {
   searchParams: Promise<{ success?: string; status?: string }>;
 }) {
+  await requireAdmin();
+
   const { success, status } = await searchParams;
   const activeFilter = (STATUS_FILTERS as readonly string[]).includes(status ?? '')
     ? (status as (typeof STATUS_FILTERS)[number])

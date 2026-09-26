@@ -1,4 +1,6 @@
+// src/app/admin/sources/[id]/edit/page.tsx
 import { notFound } from 'next/navigation';
+import { requireAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import SourceForm from '../../SourceForm';
 
@@ -7,6 +9,8 @@ export default async function EditSourcePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAdmin();
+
   const { id } = await params;
   const supabase = await createClient();
   const { data: source } = await supabase

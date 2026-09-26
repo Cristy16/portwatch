@@ -1,8 +1,12 @@
+// src/app/admin/page.tsx
 import Link from 'next/link';
+import { requireAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import { sevenDaysAgoISO } from '@/lib/manila-time';
 
 export default async function AdminDashboardPage() {
+  await requireAdmin();
+
   const supabase = await createClient();
   const sevenDaysAgo = sevenDaysAgoISO();
 

@@ -1,4 +1,6 @@
+// src/app/admin/announcements/[id]/edit/page.tsx
 import { notFound } from 'next/navigation';
+import { requireAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import { utcToManilaDatetimeLocal, utcToManilaDateOnly } from '@/lib/manila-time';
 import AnnouncementForm from '../../AnnouncementForm';
@@ -8,6 +10,8 @@ export default async function EditAnnouncementPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAdmin();
+
   const { id } = await params;
   const supabase = await createClient();
 

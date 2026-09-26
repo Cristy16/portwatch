@@ -1,4 +1,6 @@
+// src/app/admin/routes/page.tsx
 import Link from 'next/link';
+import { requireAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import RouteRow from './RouteRow';
 
@@ -7,6 +9,8 @@ export default async function RoutesPage({
 }: {
   searchParams: Promise<{ success?: string }>;
 }) {
+  await requireAdmin();
+
   const { success } = await searchParams;
   const supabase = await createClient();
   const { data: routes, error: fetchError } = await supabase

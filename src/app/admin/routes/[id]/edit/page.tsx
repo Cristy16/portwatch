@@ -1,4 +1,6 @@
+// src/app/admin/routes/[id]/edit/page.tsx
 import { notFound } from 'next/navigation';
+import { requireAdmin } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import RouteForm from '../../RouteForm';
 
@@ -7,6 +9,8 @@ export default async function EditRoutePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requireAdmin();
+
   const { id } = await params;
   const supabase = await createClient();
 

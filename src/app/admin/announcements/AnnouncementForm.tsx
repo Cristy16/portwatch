@@ -1,3 +1,4 @@
+// src/app/admin/announcements/AnnouncementForm.tsx
 'use client';
 
 import { useActionState, useState } from 'react';
@@ -161,13 +162,14 @@ export default function AnnouncementForm({
 
       <div>
         <label htmlFor="source_url" className="block text-sm font-medium text-gray-700">
-          Source URL (optional)
+          Source URL
         </label>
         <input
           id="source_url"
           name="source_url"
           type="url"
           defaultValue={announcement?.source_url ?? ''}
+          required
           placeholder="https://..."
           className="mt-1 block w-full rounded border border-gray-300 px-3 py-2"
         />

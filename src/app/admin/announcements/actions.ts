@@ -1,3 +1,4 @@
+// src/app/admin/announcements/actions.ts
 'use server';
 
 import { z } from 'zod';
@@ -31,9 +32,8 @@ const announcementSchema = z
     source_url: z
       .string()
       .trim()
-      .url('Source URL must be a valid URL')
-      .optional()
-      .or(z.literal('')),
+      .min(1, 'Source URL is required')
+      .url('Source URL must be a valid URL'),
     published_at: z.string().trim().min(1, 'Published date is required'),
     effective_from: z.string().trim().optional().or(z.literal('')),
     effective_until: z.string().trim().optional().or(z.literal('')),
@@ -96,7 +96,7 @@ async function saveAnnouncement(
     type: data.type,
     impact: data.impact,
     source_id: data.source_id,
-    source_url: data.source_url || null,
+    source_url: data.source_url,
     published_at: manilaLocalToUTC(data.published_at),
     effective_from: data.effective_from ? manilaLocalToUTC(data.effective_from) : null,
     effective_until: data.effective_until ? manilaEndOfDayToUTC(data.effective_until) : null,

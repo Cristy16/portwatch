@@ -29,5 +29,6 @@ Statuses: NORMAL, MONITOR, DISRUPTED, UNKNOWN. PortWatch informs; it never says 
   as a daily check-in (at least every 48 hours) so routes don't fall back to UNKNOWN.
 - Future automation: automated checks should be recorded (e.g. a last_checked_at value) and automated items should arrive as drafts for admin review, never published automatically.
 - Impact can escalate status but never downgrade it.
-- Source rules (inactive sources ignored; unofficial sources: [A or B]) are applied inside the status function.
+- Source rules (inactive sources ignored;)
+- Unofficial sources: [IGNORE | CAP_AT_MONITOR] — see status.ts DEFAULT_UNOFFICIAL_SOURCE_POLICY.
 - Admin form rules (Phase 4): "until" dates save end of day Manila time; every announcement needs at least one route or "all routes".

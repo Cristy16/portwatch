@@ -1,3 +1,4 @@
+// src/lib/manila-time.ts
 // Asia/Manila is a fixed UTC+8 offset with no DST, so all of this is safe as plain arithmetic.
 
 export function manilaEndOfDayToUTC(dateStr: string): string {
@@ -29,4 +30,18 @@ export function utcToManilaDateOnly(utcIso: string): string {
 
 export function sevenDaysAgoISO(): string {
   return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+}
+
+/**
+ * Human-readable Manila date + time for display (e.g. "Sep 25, 2026, 2:30 PM").
+ * Explicit locale and timeZone so server-rendered and client-rendered output
+ * always match, regardless of the machine's or browser's own settings —
+ * prevents a hydration mismatch in components that render this on both sides.
+ */
+export function formatManilaDateTime(utcIso: string): string {
+  return new Date(utcIso).toLocaleString('en-PH', {
+    timeZone: 'Asia/Manila',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
 }

@@ -1,8 +1,10 @@
+// src/app/admin/announcements/AnnouncementRow.tsx
 'use client';
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { archiveAnnouncement } from './actions';
+import { formatManilaDateTime } from '@/lib/manila-time';
 
 type Announcement = {
   id: string;
@@ -39,7 +41,7 @@ export default function AnnouncementRow({ announcement }: { announcement: Announ
         {status}
         {error && <span className="ml-2 text-xs text-red-600">{error}</span>}
       </td>
-      <td className="py-2 pr-4">{new Date(announcement.published_at).toLocaleString()}</td>
+      <td className="py-2 pr-4">{formatManilaDateTime(announcement.published_at)}</td>
       <td className="py-2 pr-4">
         <Link
           href={`/admin/announcements/${announcement.id}/edit`}

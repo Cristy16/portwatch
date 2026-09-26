@@ -128,6 +128,7 @@ async function saveAnnouncement(
     record.resolved_at = null;
   }
 
+  const isNewAnnouncement = id === null;
   let announcementId = id;
 
   if (announcementId) {
@@ -158,7 +159,17 @@ async function saveAnnouncement(
       route_id,
     }));
     const { error: routesError } = await supabase.from('announcement_routes').insert(rows);
-    if (routesError) return { error: routesError.message };
+    if (routesError) {
+      if (isNewAnnouncement) {
+        // The announcement row was just created and would otherwise be left
+        // pointing at zero routes with no "applies to all" fallback either —
+        // an orphan with no purpose. Clean it up rather than leave it stranded.
+        // (Update path is NOT rolled back here — see Finding #3 discussion:
+        // that would require snapshotting pre-update state on every save.)
+        await supabase.from('announcements').delete().eq('id', announcementId);
+      }
+      return { error: routesError.message };
+    }
   }
 
   return {};

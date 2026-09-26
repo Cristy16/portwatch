@@ -15,7 +15,7 @@ export default async function NewAnnouncementPage() {
       .select('id, name, official, active')
       .eq('active', true)
       .order('name'),
-    supabase.from('routes').select('id, name').eq('active', true).order('name'),
+    supabase.from('routes').select('id, name, active').eq('active', true).order('name'),
   ]);
 
   return (

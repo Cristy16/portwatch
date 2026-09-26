@@ -15,27 +15,33 @@ export default async function EditAnnouncementPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: announcement }, { data: activeSources }, { data: routes }, { data: links }] =
-    await Promise.all([
-      supabase
-        .from('announcements')
-        .select(
-          'id, title, description, type, impact, source_id, source_url, published_at, effective_from, effective_until, applies_to_all_routes, status'
-        )
-        .eq('id', id)
-        .single(),
-      supabase
-        .from('sources')
-        .select('id, name, official, active')
-        .eq('active', true)
-        .order('name'),
-      supabase.from('routes').select('id, name').eq('active', true).order('name'),
-      supabase.from('announcement_routes').select('route_id').eq('announcement_id', id),
-    ]);
+  const [
+    { data: announcement },
+    { data: activeSources },
+    { data: activeRoutes },
+    { data: links },
+  ] = await Promise.all([
+    supabase
+      .from('announcements')
+      .select(
+        'id, title, description, type, impact, source_id, source_url, published_at, effective_from, effective_until, applies_to_all_routes, status'
+      )
+      .eq('id', id)
+      .single(),
+    supabase
+      .from('sources')
+      .select('id, name, official, active')
+      .eq('active', true)
+      .order('name'),
+    supabase.from('routes').select('id, name, active').eq('active', true).order('name'),
+    supabase.from('announcement_routes').select('route_id').eq('announcement_id', id),
+  ]);
 
   if (!announcement) {
     notFound();
   }
+
+  const linkedRouteIds = (links ?? []).map((l) => l.route_id);
 
   // Force-include the announcement's current source even if it's since gone
   // inactive, so the dropdown never silently defaults to a different one.
@@ -51,6 +57,23 @@ export default async function EditAnnouncementPage({
     }
   }
 
+  // Force-include any currently-linked routes even if they've since gone
+  // inactive, so a saved announcement never silently loses a route link
+  // just because the route was deactivated after the fact.
+  let routes = activeRoutes ?? [];
+  const missingLinkedRouteIds = linkedRouteIds.filter(
+    (routeId) => !routes.some((r) => r.id === routeId)
+  );
+  if (missingLinkedRouteIds.length > 0) {
+    const { data: inactiveLinkedRoutes } = await supabase
+      .from('routes')
+      .select('id, name, active')
+      .in('id', missingLinkedRouteIds);
+    if (inactiveLinkedRoutes) {
+      routes = [...routes, ...inactiveLinkedRoutes];
+    }
+  }
+
   const formValues = {
     ...announcement,
     published_at: utcToManilaDatetimeLocal(announcement.published_at),
@@ -60,7 +83,7 @@ export default async function EditAnnouncementPage({
     effective_until: announcement.effective_until
       ? utcToManilaDateOnly(announcement.effective_until)
       : null,
-    route_ids: (links ?? []).map((l) => l.route_id),
+    route_ids: linkedRouteIds,
   };
 
   return (
@@ -69,7 +92,7 @@ export default async function EditAnnouncementPage({
       <AnnouncementForm
         announcement={formValues}
         sources={sources}
-        routes={routes ?? []}
+        routes={routes}
         defaultPublishedAt={formValues.published_at}
       />
     </div>

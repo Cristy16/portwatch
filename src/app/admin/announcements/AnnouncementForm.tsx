@@ -27,7 +27,7 @@ const STATUS_OPTIONS = [
 ] as const;
 
 type Source = { id: string; name: string; official: boolean; active: boolean };
-type Route = { id: string; name: string };
+type Route = { id: string; name: string; active: boolean };
 
 type Announcement = {
   id: string;
@@ -246,6 +246,7 @@ export default function AnnouncementForm({
               />
               <label htmlFor={`route-${r.id}`} className="text-sm text-gray-700">
                 {r.name}
+                {!r.active ? ' (inactive)' : ''}
               </label>
             </div>
           ))}

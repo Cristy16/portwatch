@@ -90,7 +90,22 @@ async function saveAnnouncement(
     return { error: 'Cancellations and Suspensions require an official source.' };
   }
 
-  const record = {
+  // resolved_at rule: set on transition INTO RESOLVED, cleared on transition
+  // AWAY from RESOLVED, left untouched if status stays RESOLVED across an edit.
+  let previousStatus: string | null = null;
+  if (id) {
+    const { data: existing, error: existingError } = await supabase
+      .from('announcements')
+      .select('status')
+      .eq('id', id)
+      .single();
+    if (existingError || !existing) {
+      return { error: 'Announcement could not be found.' };
+    }
+    previousStatus = existing.status;
+  }
+
+  const record: Record<string, unknown> = {
     title: data.title,
     description: data.description,
     type: data.type,
@@ -103,6 +118,15 @@ async function saveAnnouncement(
     applies_to_all_routes: data.applies_to_all_routes,
     status: data.status,
   };
+
+  if (data.status === 'RESOLVED') {
+    if (previousStatus !== 'RESOLVED') {
+      record.resolved_at = new Date().toISOString();
+    }
+    // else: status stays RESOLVED across this edit — leave resolved_at untouched.
+  } else {
+    record.resolved_at = null;
+  }
 
   let announcementId = id;
 
@@ -183,7 +207,7 @@ export async function archiveAnnouncement(id: string): Promise<{ error?: string 
   const supabase = await createClient();
   const { error } = await supabase
     .from('announcements')
-    .update({ status: 'WITHDRAWN' })
+    .update({ status: 'WITHDRAWN', resolved_at: null })
     .eq('id', id);
 
   if (error) {

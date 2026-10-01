@@ -4,6 +4,7 @@ import { listPublicAnnouncements } from "@/lib/queries/announcements";
 import { listActiveRoutes } from "@/lib/queries/routes";
 import AnnouncementCard from "@/components/AnnouncementCard";
 import type { StatusAnnouncementType } from "@/lib/status";
+import Link from "next/link";
 
 const ANNOUNCEMENT_TYPES: StatusAnnouncementType[] = [
   "Cancellation",
@@ -78,9 +79,9 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
           <button type="submit" className="rounded bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800">
             Apply
           </button>
-          <a href="/announcements" className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <Link href="/announcements" className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
             Clear
-          </a>
+          </Link>
         </div>
       </form>
 

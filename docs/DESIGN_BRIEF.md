@@ -30,10 +30,22 @@ For use by Antigravity (and anyone doing visual work) starting in Phase 5. Save 
 
 ## 4. Layout & components
 
+**Navigation: left sidebar, not a top nav bar.** Decided after reviewing a reference (a SaaS admin-dashboard style: white sidebar panel, icon + label nav rows, active-item highlight, collapses to icon-only on narrow widths). PortWatch's site is flatter than that reference — no nested sections like "Reports > Enrollment" — so the sidebar should borrow the *visual pattern* (white/light panel, generous row spacing, small accent highlight on the active item) without inventing groupings that don't exist. Flat list of links only:
+- Home (dashboard)
+- Announcements
+- Routes
+- My Trips (visible when signed in)
+- Admin (visible only to admins — links into the existing `/admin` section, doesn't replace it)
+- Login/Sign out at the bottom
+
+**Responsive behavior:** collapse to icon-only (or an off-canvas drawer opened by a hamburger button) below the tablet breakpoint — don't just shrink a full-width sidebar on mobile, that wastes screen space on a phone. This replaces the current top-nav `Header` component entirely.
+
+**Accent color use, corrected:** the reference's own accent is used *sparingly* — a small logo mark, an active-row highlight bar, a stat number — never as a large background fill. Apply the same restraint with **navy/teal** (Section 2's color, unchanged — do not switch to purple). If an earlier pass felt "boring blue," that's very likely this restraint being missing (blue used as flooded background), not the color choice itself.
+
 - **Card-based** for announcements and routes — a bordered or subtly-shadowed block per item, not a dense table-like list, except in admin (admin can stay denser/table-based, since that's Claude's domain, not Antigravity's).
 - Consistent spacing scale (Tailwind defaults are fine — stick to a small set like `4, 6, 8, 12, 16` rather than arbitrary values).
 - Buttons: solid primary color for the main action, outlined/ghost for secondary — avoid more than one visual "shout" per screen.
-- Icons: simple line icons only (e.g. Lucide, already available in this project's tooling) — no cartoon/mascot-style icons. A subtle boat/anchor/wave motif is fine as an accent (e.g. a small icon in the header), but keep it restrained, not decorative.
+- Icons: simple line icons only (e.g. Lucide, already available in this project's tooling) — no cartoon/mascot-style icons. A subtle boat/anchor/wave motif is fine as an accent (e.g. a small icon in the sidebar header), but keep it restrained, not decorative.
 
 ## 5. Imagery
 
